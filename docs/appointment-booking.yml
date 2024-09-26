@@ -1,0 +1,320 @@
+openapi: 3.1.0
+info: 
+  title: Appointment Booking API
+  summary: Useful REST service for creating appointments
+  version: 'v1.0'
+
+servers: 
+  - url: http://localhost:3001
+
+paths:
+  /appointments:
+    post:
+      operationId: save-apointment-bookings
+      description: Registers the patients booking details
+      requestBody: 
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Appointment'
+      responses:
+        200:
+          description: Succesfully Saved
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+      
+    put:
+      operationId: update-appointment
+      description: Updates appointment details
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Appointment'
+      responses:
+        200:
+          description: Successfully updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+
+  /appointments-history:
+    get:
+      operationId: get-appointment-history
+      description: Retrieve appointment history
+      responses:
+        200:
+          description: Successfully retrieved appointment history
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentHistory'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /appointments-history/{id}/patient-feedback:
+    post:
+      operationId: patient feedback
+      description: Registers the patients feedback
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            examples: 
+              - 1001
+      requestBody: 
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Patient-feedback'
+      responses:
+        200:
+          description: Succesfully Saved
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Patient-feedback'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /appointments-history/{id}/doctor-comment:
+    post:
+      operationId: doctors comment
+      description: Registers the patients feedback
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            examples: 
+              - 1001
+      requestBody: 
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Doctor-comment'
+      responses:
+        200:
+          description: Succesfully Saved
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Doctor-comment'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+    
+
+  /user/get:
+    get:
+      operationId: get-user
+      description: Get User details
+      responses:
+        200:
+          description: User information
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+
+components:
+  schemas:
+
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples: 
+            - 12
+        startTime:
+          type: string
+          format: date-time
+          examples: 
+            - 15rd April - 2:00 pm
+        
+        endTime:
+          type: string
+          format: date-time
+          examples: 
+            - 15rd April - 3:00 pm
+        
+        doctorName:
+          type: string
+          examples:
+            - Jane Doe
+        
+        location:
+          $ref: '#/components/schemas/Location'
+
+        
+        status:
+          type: string
+          enum: [booked,cancelled,completed]
+          examples: 
+            - booked
+            
+
+
+
+
+    
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples: 
+            - 1
+        name:
+          type: string
+          examples: 
+            - Health Centre
+        address:
+          type: string
+          examples: 
+            - 186 Kelton St.
+        city:
+          type: string
+          examples: 
+            - Allston
+        state:
+          type: string
+          examples: 
+            - MA
+        country:
+          type: string
+          examples: 
+            - United States of America
+        postalCode:
+          type: string
+          examples: 
+            - 02134
+
+
+
+    AppointmentHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples: 
+            - 2324334
+        user:
+          $ref: '#/components/schemas/UserDto'
+        appointmentDate:
+          type: string
+          format: date-time
+          examples: 
+            - "2024-04-15T14:00:00Z"
+        notes:
+          type: string
+          examples: 
+            - "The appointment went well. No issues reported."
+        patientFeedback:
+          $ref: '#/components/schemas/Patient-feedback'
+        doctorComments:
+          $ref: '#/components/schemas/Doctor-comment'
+
+  
+    Patient-feedback:
+      type: object
+      properties:
+        comment:
+          type: string
+          examples: 
+            - "The service was excellent!"
+        rating:
+          type: integer
+          examples: 
+            - 5
+    
+    Doctor-comment:
+      type: string
+      examples: 
+        - "Patient responded well to treatment. Follow-up scheduled in 2 weeks."
+
+
+
+
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1001
+        firstname:
+          type: string
+          examples:
+            - Jane
+        lastname:
+          type: string
+          examples:
+            - Doe
+        username:
+          type: string
+          format: email
+          examples:
+            - jane.doe@gmail.com
+        role:
+          type: string
+          enum: [USER,PATIENT,DOCTOR]
+          examples:
+            - USER
+            - PATIENT
+            - DOCTOR
+
+    
+    UnexpectedError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 1001
+            errorCode: InternalError
+            message: An internal error occurred
+      description: |-
+        An unexpected internal error occurred
+        * `InternalError` - An internal error occurred
+    
+    ResponseObject:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              respId:
+                type: integer
+                format: int32
+              respCode:
+                type: string
+              message:
+                type: string
+

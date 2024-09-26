@@ -1,0 +1,197 @@
+openapi: "3.1.0"
+info:
+  title: Medical History REST API
+  description: API for managing users' medical history, appointments, and vaccination forms
+  version: "v1.0"
+paths:
+  /medical-history/get-list:
+    get:
+      summary: Retrieve the medical history of a specific user
+      responses:
+        200:
+          description: Medical history data returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicalHistoryEntry"
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /medical-history/create:
+    post:
+      summary: Add a new medical history entry for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicalHistoryEntry"
+      responses:
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /appointments:
+    get:
+      summary: Retrieve previous appointments of a specific user
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              properties:
+                status:
+                  type: enum
+                  examples:
+                    - UPCOMING
+      responses:
+        200:
+          description: Previous appointments data returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /vaccination-form:
+    get:
+      summary: Retrieve vaccination form for a specific user
+      responses:
+        200:
+          description: Vaccination form data returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VaccinationForm"
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+components:
+  schemas:
+    MedicalHistoryEntry:
+      type: object
+      properties:
+        username:
+          type: email
+          example: 
+            - JohnDoe@gmail.com
+        doctorName:
+          type: string
+          example: 
+            - Dr.Suess
+        doctorSpecialization:
+          type: string
+          example: 
+            - Cardiologist
+        visitDate:
+          type: string
+          format: date
+          example: 
+            - 01-09-2024
+        diagnosis:
+          type: string
+          example: 
+            - Coronary Artery Disease
+        treatment:
+          type: string
+          example: 
+            - PTCA (Stunt)
+    
+    Appointment:
+      type: object
+      properties:
+        username:
+          type: email
+          example: 
+            - PhoebeBuffay@gmail.com
+        doctorName:
+          type: string
+          example: 
+            - Dr.Green
+        doctorSpecialization:
+          type: string
+          example: 
+            - Ob-Gyn
+        appointmentDate:
+          type: string
+          format: date-time
+          example: 
+            - 15rd April - 2:00 pm
+        status:
+          type: string
+          enum: [PREVIOUS,UPCOMING]
+          example: 
+            - UPCOMING
+    VaccinationForm:
+      type: object
+      properties:
+        username:
+          type: email
+          example: 
+            - JoeyTribbiani@gmail.com
+        covidVaccine:
+          type: boolean
+          example: 
+            - true
+        polioVaccine:
+          type: boolean
+          example: 
+            - true
+        influenzaVaccine:
+          type: boolean
+          example: 
+            - false
+        varicellaVaccine:
+          type: boolean
+          example:
+            - false
+        hpvVaccine:
+          type: boolean
+          example:
+            - true        
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 401
+            errorCode: AccessDenied
+            message: Access denied.
+      description: Authentication failure
+    UnexpectedError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 1001
+            errorCode: InternalError
+            message: An internal error occurred
+      description: |-
+        An unexpected internal error occurred
+        * `InternalError` - An internal error occurred
+    ResponseObject:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              respId:
+                type: integer
+                format: int32
+              respCode:
+                type: string
+              message:
+                type: string

@@ -1,0 +1,230 @@
+openapi: 3.1.0
+info:
+  title: CodeCare - Events API
+  summary: The REST service for Healthcare Events.
+  version: 'v1.0'
+servers:
+  - url: http://localhost:3001
+paths:
+  /events/get-list:
+    get:
+      operationId: get-events-list
+      description: Get the list of medical events
+      responses:
+        200:
+          description: Events list fetched successfully
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /events/{eventId}:
+    get:
+      operationId: get-event-details
+      description: Get the details of a particular event
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1001
+      responses:
+        200:
+          description: Event details fetched successfully
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /events/create:
+    post:
+      operationId: create-event
+      description: Create an Healthcare Event
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        200:
+          description: Successfully created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /events/{eventId}/update:
+    post:
+      operationId: update-event
+      description: Update the selected Event
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1001
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        200:
+          description: Successfully Updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /events/{eventId}/delete:
+    post:
+      operationId: delete-event
+      description: Delete an Event
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1001
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        200:
+          description: Successfully deleted
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1001
+        eventType:
+          type: string
+          examples:
+            - vaccination camp
+        title:
+          type: string
+          examples:
+            - COVID-19 Mobile Vaccination Program
+        organizer:
+          type: string
+          examples:
+            - Massachusetts Gov
+        description:
+          type: string
+          examples:
+            - Massachusetts is offering organizations options to vaccinate individuals through pop-up or mobile on-site clinics.
+        location:
+          $ref: '#/components/schemas/Location'
+        date:
+          type: string
+          examples:
+            - 03/18/2023
+        time:
+          type: string
+          examples:
+            - 9:00 AM-4:00 PM
+        contactinfo:
+          type: string
+          examples:
+            - +1 857 123 4567
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1
+        name:
+          type: string
+          examples:
+            - Health Centre
+        address:
+          type: string
+          examples:
+            - 186 Kelton St.
+        city:
+          type: string
+          examples:
+            - Allston
+        state:
+          type: string
+          examples:
+            - MA
+        country:
+          type: string
+          examples:
+            - United States of America
+        postalCode:
+          type: string
+          examples:
+            - 02134
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 401
+            errorCode: AccessDenied
+            message: Access denied.
+      description: Authentication failure
+    UnexpectedError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 1001
+            errorCode: InternalError
+            message: An internal error occurred
+      description: |-
+        An unexpected internal error occurred
+        * `InternalError` - An internal error occurred
+    ResponseObject:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              respId:
+                type: integer
+                format: int32
+              respCode:
+                type: string
+              message:
+                type: string
+

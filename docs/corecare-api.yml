@@ -1,0 +1,518 @@
+openapi: 3.1.0
+info:
+  title: The CodeCare API
+  summary: The REST service for CodeCare.
+  version: 'v1.0'
+servers:
+  - url: http://localhost:3001
+paths:
+  /auth/login:
+    post:
+      operationId: user-login
+      description: Login API
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        200:
+          description: Login successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /auth/logout:
+    get:
+      operationId: user-logout
+      description: Logout API
+      responses:
+        200:
+          description: Logout successful
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /auth/verify:
+    get:
+      operationId: user-verify
+      description: Verify whether user allowed to access path
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Verify'
+      responses:
+        200:
+          description: Used allowed
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /user/get:
+    get:
+      operationId: get-user
+      description: Get User details
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              properties:
+                username:
+                  type: string
+                  examples:
+                    - jane.doe@gmail.com
+      responses:
+        200:
+          description: User information
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /user/get-list:
+    operationId: get-user-list
+    description: Get multiple User details
+    responses:
+      200:
+        description: User information
+        content:
+          'application/json':
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserDto'
+      400:
+        $ref: '#/components/schemas/UnexpectedError'
+      401:
+        $ref: '#/components/schemas/Unauthorized'
+      500:
+        $ref: '#/components/schemas/UnexpectedError'
+  /user/create:
+    post:
+      operationId: create-user
+      description: Register users for the application
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        200:
+          description: Successfully created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /user/update:
+    put:
+      operationId: update-user
+      description: Update users information
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        200:
+          description: Successfully updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /donation/get:
+    get:
+      operationId: get-donation
+      description: Get donation details
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              properties:
+                id:
+                  type: integer
+                  examples:
+                    - 1001
+      responses:
+        200:
+          description: User information
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/DonationDto'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /donation/get-list:
+    get:
+      operationId: get-donations-list
+      description: Get multiple donation details
+      responses:
+        200:
+          description: User information
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DonationDto'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /donation/create:
+    post:
+      operationId: create-donation
+      description: Create donation record
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Donation'
+      responses:
+        200:
+          description: Successfully created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ResponseObject'
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        401:
+          $ref: '#/components/schemas/Unauthorized'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+  /medical-history/get-list:
+    get:
+      summary: Retrieve the medical history of a specific user
+      responses:
+        200:
+          description: Medical history data returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicalHistoryEntry"
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /medical-history/create:
+    post:
+      summary: Add a new medical history entry for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicalHistoryEntry"
+      responses:
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /appointments:
+    get:
+      summary: Retrieve previous appointments of a specific user
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              properties:
+                status:
+                  type: enum
+                  examples:
+                    - UPCOMING
+      responses:
+        200:
+          description: Previous appointments data returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+  /vaccination-form:
+    get:
+      summary: Retrieve vaccination form for a specific user
+      responses:
+        200:
+          description: Vaccination form data returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VaccinationForm"
+        400:
+          $ref: '#/components/schemas/UnexpectedError'
+        500:
+          $ref: '#/components/schemas/UnexpectedError'
+
+
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        username:
+          type: email
+          examples:
+            - jane.doe@gmail.com
+        password:
+          type: password
+          examples:
+            - password@123
+    Verify:
+      type: object
+      properties:
+        path:
+          type: string
+          examples:
+            - /vaccine/create
+    UserRegistration:
+      type: object
+      properties:
+        firstname:
+          type: string
+          examples:
+            - Jane
+        lastname:
+          type: string
+          examples:
+            - Doe
+        username:
+          type: email
+          examples:
+            - jane.doe@gmail.com
+        password:
+          type: password
+          examples:
+            - password@123
+        role:
+          type: string
+          examples:
+            - USER
+            - DOCTOR
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+            - 1001
+        firstname:
+          type: string
+          examples:
+            - Jane
+        lastname:
+          type: string
+          examples:
+            - Doe
+        username:
+          type: email
+          examples:
+            - jane.doe@gmail.com
+        role:
+          type: string
+          examples:
+            - USER
+            - DOCTOR
+    Donation:
+      type: object
+      properties:
+        amount:
+          type: integer
+          examples:
+            - 1000
+        reason:
+          type: id
+          description: Donation drive id or casual donation
+          example:
+            - 1001
+    DonationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example:
+            - 1001
+        amount:
+          type: integer
+          examples:
+            - 1000
+        reason:
+          type: id
+          description: Donation drive id or casual donation
+          example:
+            - 1001
+        date:
+          type: string
+          example:
+            - 12/12/2023
+        username:
+          type: string
+          example:
+            - jane.doe@gmail.com
+    MedicalHistoryEntry:
+      type: object
+      properties:
+        username:
+          type: email
+          example: 
+            - JohnDoe@gmail.com
+        doctorName:
+          type: string
+          example: 
+            - Dr.Suess
+        doctorSpecialization:
+          type: string
+          example: 
+            - Cardiologist
+        visitDate:
+          type: string
+          format: date
+          example: 
+            - 01-09-2024
+        diagnosis:
+          type: string
+          example: 
+            - Coronary Artery Disease
+        treatment:
+          type: string
+          example: 
+            - PTCA (Stunt)
+    
+    Appointment:
+      type: object
+      properties:
+        username:
+          type: email
+          example: 
+            - PhoebeBuffay@gmail.com
+        doctorName:
+          type: string
+          example: 
+            - Dr.Green
+        doctorSpecialization:
+          type: string
+          example: 
+            - Ob-Gyn
+        appointmentDate:
+          type: string
+          format: date-time
+          example: 
+            - 15rd April - 2:00 pm
+        status:
+          type: string
+          enum: [PREVIOUS,UPCOMING]
+          example: 
+            - UPCOMING
+    VaccinationForm:
+      type: object
+      properties:
+        username:
+          type: email
+          example: 
+            - JoeyTribbiani@gmail.com
+        covidVaccine:
+          type: boolean
+          example: 
+            - true
+        polioVaccine:
+          type: boolean
+          example: 
+            - true
+        influenzaVaccine:
+          type: boolean
+          example: 
+            - false
+        varicellaVaccine:
+          type: boolean
+          exapmle: 
+            - false
+        hpvVaccine:
+          type: boolean
+          exapmle: 
+            - true        
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 401
+            errorCode: AccessDenied
+            message: Access denied.
+      description: Authentication failure
+    UnexpectedError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseObject'
+          example:
+            errorId: 1001
+            errorCode: InternalError
+            message: An internal error occurred
+      description: |-
+        An unexpected internal error occurred
+        * `InternalError` - An internal error occurred
+    ResponseObject:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              respId:
+                type: integer
+                format: int32
+              respCode:
+                type: string
+              message:
+                type: string
